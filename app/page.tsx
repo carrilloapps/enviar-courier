@@ -1,16 +1,22 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useApp } from '@/app/lib/context';
 import { convertPrice, formatPrice, PRICING_TIERS } from '@/app/lib/pricing';
 import { COLOMBIA_LOCATIONS, VENEZUELA_LOCATIONS } from '@/app/lib/locations';
-import { useState, useEffect, useRef } from 'react';
+import {
+  MOCK_SHIPMENTS,
+  MOCK_TRACKING_EVENTS,
+  STATUS_LABELS,
+  STATUS_COLORS,
+} from '@/app/lib/dashboard-data';
+import { useState, useRef } from 'react';
 import {
   Search,
   ArrowRight,
   Truck,
   Package,
-  Radio,
   ShieldCheck,
   Calculator,
   MapPin,
@@ -19,58 +25,40 @@ import {
   Copy,
   Check,
   Clock,
-  Users,
-  Globe,
-  Award,
   Phone,
   Zap,
   ArrowUpRight,
   Boxes,
   ScanLine,
   Flame,
+  Scale,
+  AlertTriangle,
+  Loader2,
+  CheckCircle,
+  Cog,
 } from 'lucide-react';
 
-function AnimatedCounter({ target, suffix = '' }: { target: string; suffix?: string }) {
-  const [count, setCount] = useState(0);
-  const [visible, setVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const numeric = parseInt(target.replace(/[^0-9]/g, ''));
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.3 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!visible) return;
-    const duration = 1800;
-    const steps = 60;
-    const increment = numeric / steps;
-    let current = 0;
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= numeric) { setCount(numeric); clearInterval(timer); }
-      else setCount(Math.floor(current));
-    }, duration / steps);
-    return () => clearInterval(timer);
-  }, [visible, numeric]);
-
-  return (
-    <div ref={ref} className="text-4xl sm:text-5xl font-bold text-white font-[var(--font-heading)] tabular-nums">
-      {visible ? count.toLocaleString() : '0'}{suffix}
-    </div>
-  );
-}
+// Status icons
+const STATUS_ICONS: Record<string, React.ElementType> = {
+  received: Package,
+  processing: Cog,
+  transit: Truck,
+  customs: ShieldCheck,
+  delivered: CheckCircle,
+  cancelled: AlertTriangle,
+};
 
 export default function HomePage() {
   const { t, currency } = useApp();
+  const router = useRouter();
   const [trackingNumber, setTrackingNumber] = useState('');
+  const [trackingState, setTrackingState] = useState<'idle' | 'loading' | 'found' | 'not_found'>('idle');
+  const [foundShipment, setFoundShipment] = useState<typeof MOCK_SHIPMENTS[0] | null>(null);
+  const [foundEvents, setFoundEvents] = useState<typeof MOCK_TRACKING_EVENTS>([]);
+  const [activeTier, setActiveTier] = useState(2);
   const [locationTab, setLocationTab] = useState<'CO' | 'VE'>('CO');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
 
   const copyAddress = (id: string, address: string) => {
     navigator.clipboard.writeText(address);
@@ -78,12 +66,50 @@ export default function HomePage() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const stats = [
-    { value: '15000', suffix: '+', label: t('hero.stat1'), icon: Package },
-    { value: '8500', suffix: '+', label: t('hero.stat2'), icon: Users },
-    { value: '12', suffix: '+', label: t('hero.stat3'), icon: Globe },
-    { value: '5', suffix: '+', label: t('hero.stat4'), icon: Award },
-  ];
+  // Inline tracking search
+  const doTrack = (code?: string) => {
+    const q = (code || trackingNumber).trim().toUpperCase();
+    if (!q) return;
+
+    setTrackingState('loading');
+
+    // Simulate network delay for professional feel
+    setTimeout(() => {
+      const shipment = MOCK_SHIPMENTS.find(
+        s => s.trackingCode.toUpperCase() === q || s.id.toUpperCase() === q
+      );
+
+      if (shipment) {
+        setFoundShipment(shipment);
+        const events = MOCK_TRACKING_EVENTS
+          .filter(e => e.shipmentId === shipment.id)
+          .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        setFoundEvents(events);
+        setTrackingState('found');
+      } else {
+        setFoundShipment(null);
+        setFoundEvents([]);
+        setTrackingState('not_found');
+      }
+
+      // Scroll to result
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }, 600);
+  };
+
+  const handleTrackSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    doTrack();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      doTrack();
+    }
+  };
 
   const services = [
     { icon: Truck, title: t('services.s1.title'), desc: t('services.s1.desc'), gradient: 'from-teal-400 via-teal-500 to-emerald-600' },
@@ -108,6 +134,7 @@ export default function HomePage() {
 
   const displayedTiers = PRICING_TIERS.slice(0, 6);
   const locations = locationTab === 'CO' ? COLOMBIA_LOCATIONS : VENEZUELA_LOCATIONS;
+  const heroTiers = PRICING_TIERS.slice(0, 4);
 
   return (
     <div className="overflow-hidden">
@@ -145,7 +172,7 @@ export default function HomePage() {
                 {t('hero.subtitle')}
               </p>
 
-              <div className="flex flex-wrap gap-3 mb-12">
+              <div className="flex flex-wrap gap-3 mb-10">
                 <Link
                   href="/casillero"
                   className="group inline-flex items-center gap-2.5 px-7 py-3.5 gradient-lime text-dark-950 font-bold rounded-xl hover:shadow-[0_0_30px_rgba(163,230,53,0.3)] transition-all duration-300 cursor-pointer text-sm"
@@ -165,41 +192,161 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Tracking */}
-              <div className="flex max-w-lg">
-                <div className="relative flex-1">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
-                  <input
-                    type="text"
-                    value={trackingNumber}
-                    onChange={(e) => setTrackingNumber(e.target.value)}
-                    placeholder={t('hero.track.placeholder')}
-                    className="w-full pl-11 pr-4 py-3.5 rounded-l-xl bg-white/[0.05] border border-white/[0.08] border-r-0 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm transition-all duration-200"
-                  />
+              {/* Interactive Tracking Input */}
+              <form onSubmit={handleTrackSubmit} className="max-w-lg">
+                <div className="flex">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                    <input
+                      type="text"
+                      value={trackingNumber}
+                      onChange={(e) => { setTrackingNumber(e.target.value); if (trackingState !== 'idle') setTrackingState('idle'); }}
+                      onKeyDown={handleKeyDown}
+                      placeholder={t('hero.track.placeholder')}
+                      className="w-full pl-11 pr-4 py-3.5 rounded-l-xl bg-white/[0.05] border border-white/[0.08] border-r-0 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm transition-all duration-200"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={trackingState === 'loading'}
+                    className="px-6 py-3.5 gradient-cta text-white font-bold rounded-r-xl hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] transition-all duration-300 text-sm cursor-pointer shrink-0 flex items-center gap-2 disabled:opacity-70"
+                  >
+                    {trackingState === 'loading' ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <>
+                        {t('hero.track.btn')}
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
                 </div>
-                <Link
-                  href={`/rastreo${trackingNumber ? `?q=${trackingNumber}` : ''}`}
-                  className="px-6 py-3.5 gradient-cta text-white font-bold rounded-r-xl hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] transition-all duration-300 text-sm cursor-pointer shrink-0"
-                >
-                  {t('hero.track.btn')}
-                </Link>
-              </div>
+
+                {/* Quick demo links */}
+                <div className="flex flex-wrap items-center gap-2 mt-3">
+                  <span className="text-[11px] text-neutral-600">Prueba:</span>
+                  {['EC-20250320001', 'EC-20250318002'].map(code => (
+                    <button
+                      key={code}
+                      type="button"
+                      onClick={() => { setTrackingNumber(code); doTrack(code); }}
+                      className="px-2 py-0.5 rounded-md bg-white/[0.03] border border-white/[0.06] text-[10px] font-mono text-indigo-400 hover:bg-indigo-500/10 hover:border-indigo-500/20 cursor-pointer transition-all duration-200"
+                    >
+                      {code}
+                    </button>
+                  ))}
+                </div>
+              </form>
             </div>
 
-            {/* Right: Stats Bento Grid */}
-            <div className="hidden lg:grid grid-cols-2 gap-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              {stats.map((stat, i) => (
-                <div
-                  key={i}
-                  className="glass-card rounded-2xl p-7 group cursor-default"
-                >
-                  <div className="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-5 group-hover:bg-indigo-500/20 transition-colors duration-300">
-                    <stat.icon className="w-5 h-5 text-indigo-400" />
+            {/* Right: Interactive Pricing Cards */}
+            <div className="hidden lg:block animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              <div className="glass-card rounded-2xl p-6">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-lime-400/10 border border-lime-400/20 flex items-center justify-center">
+                      <Calculator className="w-4 h-4 text-lime-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-white">{t('pricing.title')}</p>
+                      <p className="text-[10px] text-neutral-600">Colombia → Venezuela</p>
+                    </div>
                   </div>
-                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />
-                  <p className="text-sm text-neutral-500 mt-2">{stat.label}</p>
+                  <Link
+                    href="/tarifas"
+                    className="text-[11px] text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 cursor-pointer transition-colors duration-200"
+                  >
+                    {t('pricing.viewall')}
+                    <ChevronRight className="w-3 h-3" />
+                  </Link>
                 </div>
-              ))}
+
+                {/* Tier Selector Pills */}
+                <div className="flex gap-1.5 mb-5 overflow-x-auto pb-1">
+                  {heroTiers.map((tier, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveTier(i)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-all duration-300 shrink-0 ${
+                        activeTier === i
+                          ? 'gradient-cta text-white shadow-lg glow-indigo'
+                          : 'bg-white/[0.04] text-neutral-500 hover:bg-white/[0.06] border border-white/[0.04]'
+                      }`}
+                    >
+                      {tier.weight}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Active Tier Detail */}
+                <div className="bg-white/[0.02] rounded-xl p-5 border border-white/[0.04] mb-4 transition-all duration-300">
+                  <div className="flex items-end justify-between mb-4">
+                    <div>
+                      <p className="text-[10px] text-neutral-600 uppercase tracking-wider font-semibold mb-1">{t('pricing.total')}</p>
+                      <p className="text-3xl font-bold text-gradient font-[var(--font-heading)]">
+                        {formatPrice(convertPrice(heroTiers[activeTier].priceCOP, currency), currency)}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] text-neutral-600 uppercase tracking-wider font-semibold mb-1">{t('pricing.perkg')}</p>
+                      <p className="text-lg font-bold text-neutral-300">
+                        {formatPrice(convertPrice(heroTiers[activeTier].pricePerKgCOP, currency), currency)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1.5">
+                      <Scale className="w-3.5 h-3.5 text-teal-400" />
+                      <span className="text-xs text-neutral-400">{heroTiers[activeTier].weight}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Package className="w-3.5 h-3.5 text-indigo-400" />
+                      <span className="text-xs text-neutral-400">{heroTiers[activeTier].dimensions}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom rows: all 4 tiers compact */}
+                <div className="grid grid-cols-2 gap-2">
+                  {heroTiers.map((tier, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveTier(i)}
+                      className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-200 ${
+                        activeTier === i
+                          ? 'bg-indigo-500/10 border border-indigo-500/20'
+                          : 'bg-white/[0.02] border border-white/[0.03] hover:bg-white/[0.04]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold ${
+                          activeTier === i ? 'gradient-cta text-white' : 'bg-white/[0.04] text-neutral-500'
+                        }`}>
+                          {tier.weight.replace(' KG', '')}
+                        </div>
+                        <span className={`text-xs font-semibold ${activeTier === i ? 'text-white' : 'text-neutral-500'}`}>
+                          {tier.weight}
+                        </span>
+                      </div>
+                      <span className={`text-xs font-bold ${activeTier === i ? 'text-indigo-400' : 'text-neutral-600'}`}>
+                        {formatPrice(convertPrice(tier.priceCOP, currency), currency)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <Link
+                  href="https://wa.me/573027543225"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 w-full py-3 gradient-lime text-dark-950 font-bold rounded-xl hover:shadow-[0_0_20px_rgba(163,230,53,0.2)] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-sm"
+                >
+                  {t('pricing.cta')}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -207,6 +354,135 @@ export default function HomePage() {
         {/* Bottom fade */}
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-dark-900 to-transparent" />
       </section>
+
+      {/* ===== INLINE TRACKING RESULT ===== */}
+      {trackingState !== 'idle' && (
+        <section ref={resultRef} className="relative py-16">
+          <div className="absolute inset-0 gradient-section" />
+          <div className="relative max-w-3xl mx-auto px-4 sm:px-6">
+            {/* Loading */}
+            {trackingState === 'loading' && (
+              <div className="glass-card rounded-2xl p-10 text-center animate-pulse">
+                <Loader2 className="w-10 h-10 text-indigo-400 mx-auto mb-4 animate-spin" />
+                <p className="text-sm text-neutral-400">Buscando envío...</p>
+              </div>
+            )}
+
+            {/* Found */}
+            {trackingState === 'found' && foundShipment && (
+              <div className="glass-card rounded-2xl p-8 sm:p-10 animate-scale-in">
+                <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+                  <div>
+                    <p className="text-[10px] font-semibold text-neutral-600 uppercase tracking-wider mb-1">Resultado de rastreo</p>
+                    <p className="font-mono text-indigo-400 text-sm">{foundShipment.trackingCode}</p>
+                  </div>
+                  <span className={`inline-flex px-3 py-1.5 rounded-full text-xs font-bold border ${STATUS_COLORS[foundShipment.status]}`}>
+                    {STATUS_LABELS[foundShipment.status]}
+                  </span>
+                </div>
+
+                {/* Info grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                  {[
+                    { label: 'Remitente', value: foundShipment.senderName, sub: foundShipment.senderCity },
+                    { label: 'Destinatario', value: foundShipment.recipientName, sub: foundShipment.recipientCity },
+                    { label: 'Peso', value: `${foundShipment.weight} KG`, sub: foundShipment.dimensions as string },
+                    { label: 'Origen', value: foundShipment.origin === 'CO' ? 'Colombia' : foundShipment.origin === 'US' ? 'Estados Unidos' : 'China', sub: foundShipment.createdAt as string },
+                  ].map((item, i) => (
+                    <div key={i} className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.03]">
+                      <p className="text-[10px] font-semibold text-neutral-600 uppercase tracking-wider">{item.label}</p>
+                      <p className="text-sm font-semibold text-white mt-1">{item.value}</p>
+                      <p className="text-[11px] text-neutral-500 mt-0.5">{item.sub}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Progress */}
+                <div className="flex items-center gap-0 mb-6">
+                  {(['received', 'processing', 'transit', 'customs', 'delivered'] as const).map((status, i) => {
+                    const order = ['received', 'processing', 'transit', 'customs', 'delivered'];
+                    const currentIdx = order.indexOf(foundShipment.status);
+                    const isDone = i <= currentIdx && foundShipment.status !== 'cancelled';
+                    const Icon = STATUS_ICONS[status] || Package;
+                    return (
+                      <div key={status} className="flex-1 flex items-center">
+                        <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
+                          isDone ? 'gradient-cta shadow-lg' : 'bg-dark-600 border border-white/[0.06]'
+                        }`}>
+                          <Icon className={`w-4 h-4 ${isDone ? 'text-white' : 'text-neutral-600'}`} />
+                        </div>
+                        {i < 4 && (
+                          <div className={`flex-1 h-0.5 rounded-full ${isDone && i < currentIdx ? 'bg-indigo-500' : 'bg-dark-600'}`} />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Events */}
+                {foundEvents.length > 0 && (
+                  <div className="space-y-3">
+                    <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Historial</p>
+                    {foundEvents.map((event, i) => {
+                      const Icon = STATUS_ICONS[event.status] || Package;
+                      return (
+                        <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.03]">
+                          <div className="w-8 h-8 rounded-lg gradient-cta flex items-center justify-center shrink-0">
+                            <Icon className="w-4 h-4 text-white" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-white">{STATUS_LABELS[event.status]}</p>
+                            <p className="text-[11px] text-neutral-500 mt-0.5">{event.description}</p>
+                            <div className="flex items-center gap-3 mt-1">
+                              <span className="flex items-center gap-1 text-[10px] text-neutral-600">
+                                <MapPin className="w-2.5 h-2.5" /> {event.location}
+                              </span>
+                              <span className="flex items-center gap-1 text-[10px] text-neutral-600 font-mono">
+                                <Clock className="w-2.5 h-2.5" /> {event.timestamp}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* View full details link */}
+                <div className="mt-4 text-center">
+                  <button
+                    onClick={() => router.push(`/rastreo?q=${foundShipment.trackingCode}`)}
+                    className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold cursor-pointer transition-colors duration-200 inline-flex items-center gap-1"
+                  >
+                    Ver detalles completos
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Not Found */}
+            {trackingState === 'not_found' && (
+              <div className="glass-card rounded-2xl p-8 text-center animate-scale-in">
+                <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
+                  <AlertTriangle className="w-7 h-7 text-amber-400" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Envío no encontrado</h3>
+                <p className="text-sm text-neutral-500 mb-4">
+                  No encontramos ningún envío con el código <span className="font-mono text-indigo-400">{trackingNumber}</span>.
+                  Verifica tu número de guía e intenta nuevamente.
+                </p>
+                <button
+                  onClick={() => { setTrackingState('idle'); setTrackingNumber(''); }}
+                  className="px-5 py-2 gradient-cta text-white font-semibold rounded-xl hover:shadow-[0_0_16px_rgba(99,102,241,0.3)] transition-all duration-300 cursor-pointer text-sm"
+                >
+                  Intentar de nuevo
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* ===== SERVICES ===== */}
       <section id="servicios" className="relative py-28">
