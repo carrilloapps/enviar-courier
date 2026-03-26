@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useApp } from '@/app/lib/context';
 import {
@@ -26,6 +26,7 @@ import {
   Cog,
   Loader2,
 } from 'lucide-react';
+import PageHero from '@/app/components/ui/PageHero';
 
 const STATUS_ICONS: Record<string, React.ElementType> = {
   received: Package,
@@ -36,7 +37,7 @@ const STATUS_ICONS: Record<string, React.ElementType> = {
   cancelled: AlertTriangle,
 };
 
-export default function RastreoPage() {
+function RastreoContent() {
   const { t } = useApp();
   const searchParams = useSearchParams();
   const [tracking, setTracking] = useState('');
@@ -94,21 +95,13 @@ export default function RastreoPage() {
   return (
     <div className="overflow-hidden">
       {/* Hero */}
-      <section className="relative pt-32 pb-28 overflow-hidden">
-        <div className="absolute inset-0 gradient-hero" />
-        <div className="absolute inset-0 grid-bg" />
-        <div className="absolute top-20 left-[15%] w-[400px] h-[400px] rounded-full bg-indigo-500/[0.06] blur-[100px]" />
-        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold text-indigo-400 mb-6">
-            <ScanLine className="w-3.5 h-3.5" />
-            Tracking
-          </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            {t('tracking.title')}
-          </h1>
-          <p className="text-base sm:text-lg text-neutral-400 max-w-xl mx-auto mb-12">
-            {t('tracking.subtitle')}
-          </p>
+      <PageHero
+        title={t('tracking.title')}
+        subtitle={t('tracking.subtitle')}
+        badgeText="Tracking"
+        badgeIcon={ScanLine}
+        colorScheme="indigo"
+      >
 
           <form onSubmit={handleTrack} className="max-w-lg mx-auto">
             <div className="flex">
@@ -151,9 +144,7 @@ export default function RastreoPage() {
               ))}
             </div>
           </form>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-dark-900 to-transparent" />
-      </section>
+      </PageHero>
 
       {/* Loading state */}
       {result === 'loading' && (
@@ -311,5 +302,17 @@ export default function RastreoPage() {
         </section>
       )}
     </div>
+  );
+}
+
+export default function RastreoPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-dark-950 flex items-center justify-center">
+        <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
+      </div>
+    }>
+      <RastreoContent />
+    </Suspense>
   );
 }

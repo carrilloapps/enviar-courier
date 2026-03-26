@@ -37,6 +37,7 @@ import {
   CheckCircle,
   Cog,
 } from 'lucide-react';
+import LocationCard from '@/app/components/ui/LocationCard';
 
 // Status icons
 const STATUS_ICONS: Record<string, React.ElementType> = {
@@ -680,48 +681,7 @@ export default function HomePage() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {locations.map((loc) => (
-              <div
-                key={loc.id}
-                className="glass-card rounded-2xl p-6 group"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h4 className="text-base font-bold text-white">
-                      {loc.city}
-                      {loc.area && <span className="text-teal-400 text-sm font-normal ml-1.5">· {loc.area}</span>}
-                    </h4>
-                    <p className="text-xs text-neutral-600 mt-0.5">{t('locations.postal')}: {loc.postalCode}</p>
-                  </div>
-                  <button
-                    onClick={() => copyAddress(loc.id, loc.address)}
-                    className="p-2 rounded-lg hover:bg-white/[0.06] text-neutral-600 hover:text-teal-400 transition-all duration-200 cursor-pointer"
-                    aria-label={t('locations.copy')}
-                  >
-                    {copiedId === loc.id ? <Check className="w-4 h-4 text-teal-400" /> : <Copy className="w-4 h-4" />}
-                  </button>
-                </div>
-                <p className="text-sm text-neutral-400 mb-3 leading-relaxed">{loc.address}</p>
-                {loc.hours && (
-                  <div className="flex items-start gap-2 mb-3">
-                    <Clock className="w-3 h-3 text-neutral-600 mt-0.5 shrink-0" />
-                    <p className="text-xs text-neutral-600">{loc.hours}</p>
-                  </div>
-                )}
-                {loc.note && (
-                  <p className="text-xs text-yellow-400/80 bg-yellow-400/5 px-3 py-2 rounded-lg mb-3 border border-yellow-400/10">
-                    {loc.note}
-                  </p>
-                )}
-                <div className="flex items-center gap-3 pt-3 border-t border-white/[0.04]">
-                  <Link
-                    href={`tel:${loc.phone.replace(/\s/g, '')}`}
-                    className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-indigo-400 transition-colors duration-200 cursor-pointer"
-                  >
-                    <Phone className="w-3 h-3" />
-                    {loc.phone}
-                  </Link>
-                </div>
-              </div>
+              <LocationCard key={loc.id} loc={loc} t={t} />
             ))}
           </div>
         </div>

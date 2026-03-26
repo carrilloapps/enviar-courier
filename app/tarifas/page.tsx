@@ -12,6 +12,7 @@ import {
   Scale,
   Zap,
 } from 'lucide-react';
+import PageHero from '@/app/components/ui/PageHero';
 import { useState } from 'react';
 
 export default function TarifasPage() {
@@ -28,24 +29,13 @@ export default function TarifasPage() {
   return (
     <div className="overflow-hidden">
       {/* Hero */}
-      <section className="relative pt-32 pb-24 overflow-hidden">
-        <div className="absolute inset-0 gradient-hero" />
-        <div className="absolute inset-0 grid-bg" />
-        <div className="absolute top-20 right-[20%] w-[400px] h-[400px] rounded-full bg-lime-400/[0.04] blur-[100px]" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-lime-400/10 border border-lime-400/20 text-xs font-semibold text-lime-300 mb-6">
-            <Scale className="w-3.5 h-3.5" />
-            {t('rates.title')}
-          </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            {t('rates.title')}
-          </h1>
-          <p className="text-base sm:text-lg text-neutral-400 max-w-2xl mx-auto">
-            {t('rates.subtitle')}
-          </p>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-dark-900 to-transparent" />
-      </section>
+      <PageHero
+        title={t('rates.title')}
+        subtitle={t('rates.subtitle')}
+        badgeText={t('rates.title')}
+        badgeIcon={Scale}
+        colorScheme="lime"
+      />
 
       {/* Standard Rates */}
       <section className="relative py-28">

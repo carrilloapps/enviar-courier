@@ -14,6 +14,7 @@ import {
   Truck,
   ArrowRight,
 } from 'lucide-react';
+import PageHero from '@/app/components/ui/PageHero';
 
 export default function NosotrosPage() {
   const { t } = useApp();
@@ -35,24 +36,13 @@ export default function NosotrosPage() {
   return (
     <div className="overflow-hidden">
       {/* Hero */}
-      <section className="relative pt-32 pb-24 overflow-hidden">
-        <div className="absolute inset-0 gradient-hero" />
-        <div className="absolute inset-0 grid-bg" />
-        <div className="absolute top-20 left-[15%] w-[400px] h-[400px] rounded-full bg-indigo-500/[0.06] blur-[100px]" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold text-indigo-400 mb-6">
-            <Users className="w-3.5 h-3.5" />
-            {t('about.title')}
-          </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            {t('about.title')}
-          </h1>
-          <p className="text-base sm:text-lg text-neutral-400 max-w-2xl mx-auto">
-            {t('about.subtitle')}
-          </p>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-dark-900 to-transparent" />
-      </section>
+      <PageHero
+        title={t('about.title')}
+        subtitle={t('about.subtitle')}
+        badgeText={t('about.title')}
+        badgeIcon={Users}
+        colorScheme="indigo"
+      />
 
       {/* Mission & Vision */}
       <section className="relative py-28">

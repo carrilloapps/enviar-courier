@@ -16,6 +16,8 @@ import {
   Zap,
   ArrowUpRight,
 } from 'lucide-react';
+import PageHero from '@/app/components/ui/PageHero';
+import LocationCard from '@/app/components/ui/LocationCard';
 
 export default function ContactoPage() {
   const { t } = useApp();
@@ -33,24 +35,13 @@ export default function ContactoPage() {
   return (
     <div className="overflow-hidden">
       {/* Hero */}
-      <section className="relative pt-32 pb-24 overflow-hidden">
-        <div className="absolute inset-0 gradient-hero" />
-        <div className="absolute inset-0 grid-bg" />
-        <div className="absolute top-20 right-[20%] w-[400px] h-[400px] rounded-full bg-teal-400/[0.05] blur-[100px]" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-400/10 border border-teal-400/20 text-xs font-semibold text-teal-300 mb-6">
-            <MessageCircle className="w-3.5 h-3.5" />
-            {t('contact.title')}
-          </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            {t('contact.title')}
-          </h1>
-          <p className="text-base sm:text-lg text-neutral-400 max-w-2xl mx-auto">
-            {t('contact.subtitle')}
-          </p>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-dark-900 to-transparent" />
-      </section>
+      <PageHero
+        title={t('contact.title')}
+        subtitle={t('contact.subtitle')}
+        badgeText={t('contact.title')}
+        badgeIcon={MessageCircle}
+        colorScheme="teal"
+      />
 
       {/* Contact Form + Info */}
       <section className="relative py-28">
@@ -191,19 +182,7 @@ export default function ContactoPage() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {allLocations.map((loc) => (
-              <div key={loc.id} className="glass-card rounded-xl p-5 cursor-default">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-base">{loc.country === 'CO' ? '🇨🇴' : '🇻🇪'}</span>
-                  <h4 className="font-bold text-white text-sm">
-                    {loc.city}{loc.area ? ` · ${loc.area}` : ''}
-                  </h4>
-                </div>
-                <p className="text-xs text-neutral-500 leading-relaxed mb-2">{loc.address}</p>
-                <div className="flex items-center gap-1 text-xs text-neutral-600">
-                  <MapPin className="w-3 h-3" />
-                  CP: {loc.postalCode}
-                </div>
-              </div>
+              <LocationCard key={loc.id} loc={loc} t={t} />
             ))}
           </div>
         </div>
