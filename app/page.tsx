@@ -581,56 +581,69 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {displayedTiers.map((tier, i) => {
-              const isPopular = i === 2;
+              const isPopular = i === 1; // Center card
               return (
                 <div
                   key={i}
-                  className={`relative glass-card rounded-2xl p-8 cursor-pointer ${
-                    isPopular ? 'ring-1 ring-indigo-500/40 glow-indigo' : ''
+                  className={`relative glass-card rounded-3xl p-8 cursor-pointer transition-all duration-500 group overflow-hidden flex flex-col ${
+                    isPopular 
+                      ? 'border-indigo-500/30 shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] lg:-translate-y-4 lg:pb-12 bg-indigo-500/5' 
+                      : 'hover:border-white/10 hover:-translate-y-2'
                   }`}
                 >
+                  {/* Hover Gradient Background */}
+                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br ${isPopular ? 'from-indigo-500/10 to-transparent' : 'from-white/[0.03] to-transparent'} pointer-events-none`} />
+                  
                   {isPopular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 gradient-lime text-dark-950 text-[10px] font-black rounded-full uppercase tracking-wider">
-                      {t('pricing.popular')}
+                    <div className="absolute top-0 inset-x-0 flex justify-center z-20">
+                      <div className="px-5 py-1.5 gradient-indigo text-white text-[10px] font-black rounded-b-xl uppercase tracking-widest shadow-lg shadow-indigo-500/20">
+                        {t('pricing.popular')}
+                      </div>
                     </div>
                   )}
-                  <div className="text-center mb-6">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-white mb-4">
-                      <span className="text-xl font-bold font-[var(--font-heading)]">{tier.weight}</span>
-                    </div>
-                    <p className="text-xs text-neutral-600">{tier.dimensions}</p>
-                  </div>
 
-                  <div className="space-y-3 mb-6">
-                    <div className="flex justify-between items-center py-2 border-b border-white/[0.04]">
-                      <span className="text-sm text-neutral-500">{t('pricing.total')}</span>
-                      <span className="text-2xl font-bold text-gradient font-[var(--font-heading)]">
-                        {formatPrice(convertPrice(tier.priceCOP, currency), currency)}
-                      </span>
+                  <div className="relative z-10 flex-1 flex flex-col">
+                    <div className="flex justify-between items-start mb-8">
+                       <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-white group-hover:scale-110 group-hover:bg-indigo-500/10 group-hover:border-indigo-500/20 transition-all duration-300 shadow-lg">
+                         <Package className={`w-6 h-6 ${isPopular ? 'text-indigo-400' : 'text-neutral-400 group-hover:text-indigo-400'} transition-colors duration-300`} />
+                       </div>
+                       <div className="text-right">
+                         <span className="block text-3xl font-black text-white font-[var(--font-heading)]">{tier.weight}</span>
+                         <span className="text-xs text-neutral-500 font-medium tracking-wide uppercase">{tier.dimensions}</span>
+                       </div>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-neutral-500">{t('pricing.perkg')}</span>
-                      <span className="text-sm font-semibold text-neutral-300">
-                        {formatPrice(convertPrice(tier.pricePerKgCOP, currency), currency)}
-                      </span>
-                    </div>
-                  </div>
 
-                  <Link
-                    href="https://wa.me/573027543225"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
-                      isPopular
-                        ? 'gradient-cta text-white hover:shadow-[0_0_20px_rgba(99,102,241,0.3)]'
-                        : 'bg-white/[0.05] text-neutral-300 hover:bg-white/[0.08] border border-white/[0.06]'
-                    }`}
-                  >
-                    {t('pricing.cta')}
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                    <div className="mt-auto mb-8 p-5 rounded-2xl bg-dark-900/50 border border-white/[0.03] group-hover:border-white/[0.06] transition-colors duration-300">
+                      <div className="flex justify-between items-end mb-2">
+                        <span className="text-xs text-neutral-500 font-bold uppercase tracking-wider">{t('pricing.total')}</span>
+                        <span className="text-3xl font-black text-white font-[var(--font-heading)] tracking-tight">
+                          {formatPrice(convertPrice(tier.priceCOP, currency), currency)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs pt-2 border-t border-white/[0.04]">
+                        <span className="text-neutral-600 font-medium">Equivalente</span>
+                        <span className="text-indigo-400 font-bold">{formatPrice(convertPrice(tier.pricePerKgCOP, currency), currency)} / KG</span>
+                      </div>
+                    </div>
+
+                    <Link
+                      href="https://wa.me/573003328389"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`w-full py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer overflow-hidden relative ${
+                        isPopular
+                          ? 'gradient-cta text-white shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_30px_rgba(99,102,241,0.5)]'
+                          : 'bg-white/[0.03] text-neutral-300 hover:bg-white/[0.08] hover:text-white border border-white/[0.05]'
+                      }`}
+                    >
+                      <span className="relative z-10 flex items-center gap-2">
+                        {t('pricing.cta')}
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                      </span>
+                    </Link>
+                  </div>
                 </div>
               );
             })}
