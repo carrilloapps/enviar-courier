@@ -36,8 +36,8 @@ export default function ConfiguracionPage() {
   const [companyInfo, setCompanyInfo] = useState({
     name: 'Enviar Courier',
     email: 'info@enviarcourier.com',
-    phone: '+57 302 754 3225',
-    whatsapp: '+57 302 754 3225',
+    phone: '+57 320 851 0712',
+    whatsapp: '+57 300 332 8389',
     website: 'www.enviarcourier.com',
   });
 

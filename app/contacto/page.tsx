@@ -142,8 +142,8 @@ export default function ContactoPage() {
                 <h3 className="text-lg font-bold text-white mb-6">{t('contact.info.title')}</h3>
                 <div className="space-y-5">
                   {[
-                    { icon: MessageCircle, label: t('contact.whatsapp'), value: '+57 302 754 3225', href: 'https://wa.me/573027543225', color: 'bg-green-500/10 text-green-400 border-green-500/20' },
-                    { icon: Phone, label: t('contact.phone'), value: '+57 324 329 9800', href: 'tel:+573243299800', color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' },
+                    { icon: MessageCircle, label: t('contact.whatsapp'), value: '+57 300 332 8389', href: 'https://wa.me/573003328389', color: 'bg-green-500/10 text-green-400 border-green-500/20' },
+                    { icon: Phone, label: t('contact.phone'), value: '+57 320 851 0712', href: 'tel:+573208510712', color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' },
                     { icon: Mail, label: t('contact.email'), value: 'info@enviarcourier.com', href: 'mailto:info@enviarcourier.com', color: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
                     { icon: Clock, label: 'Horario', value: 'Lun-Vie: 9AM-5PM · Sáb: 9AM-1PM', href: null, color: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
                   ].map((item, i) => (
@@ -167,7 +167,7 @@ export default function ContactoPage() {
               </div>
 
               <Link
-                href="https://wa.me/573027543225"
+                href="https://wa.me/573003328389"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group block bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl p-6 text-center transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[0_0_30px_rgba(34,197,94,0.3)]"

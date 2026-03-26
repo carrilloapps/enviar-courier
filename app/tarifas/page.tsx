@@ -88,7 +88,7 @@ export default function TarifasPage() {
                       </td>
                       <td className="px-6 py-4 text-center">
                         <Link
-                          href="https://wa.me/573027543225"
+                          href="https://wa.me/573003328389"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 px-4 py-2 bg-indigo-500/10 text-indigo-400 rounded-lg text-xs font-bold hover:bg-indigo-500/20 border border-indigo-500/20 transition-all duration-200 cursor-pointer"

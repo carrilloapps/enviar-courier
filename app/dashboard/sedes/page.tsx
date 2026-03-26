@@ -290,11 +290,11 @@ export default function SedesPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[10px] font-semibold text-neutral-400 mb-1.5 uppercase tracking-wider">Teléfono</label>
-                  <input name="phone" required defaultValue={editingLocation?.phone || ''} placeholder="+57 324..." className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all duration-200" />
+                  <input name="phone" required defaultValue={editingLocation?.phone || ''} placeholder="+57 320..." className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all duration-200" />
                 </div>
                 <div>
                   <label className="block text-[10px] font-semibold text-neutral-400 mb-1.5 uppercase tracking-wider">WhatsApp</label>
-                  <input name="whatsapp" required defaultValue={editingLocation?.whatsapp || ''} placeholder="+57 302..." className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all duration-200" />
+                  <input name="whatsapp" required defaultValue={editingLocation?.whatsapp || ''} placeholder="+57 300..." className="w-full px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all duration-200" />
                 </div>
               </div>
               <div>

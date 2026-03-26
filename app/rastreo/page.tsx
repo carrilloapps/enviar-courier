@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useApp } from '@/app/lib/context';
 import {
@@ -24,6 +24,7 @@ import {
   User,
   Globe,
   Cog,
+  Loader2,
 } from 'lucide-react';
 
 const STATUS_ICONS: Record<string, React.ElementType> = {
@@ -39,9 +40,10 @@ export default function RastreoPage() {
   const { t } = useApp();
   const searchParams = useSearchParams();
   const [tracking, setTracking] = useState('');
-  const [result, setResult] = useState<'idle' | 'found' | 'not_found'>('idle');
+  const [result, setResult] = useState<'idle' | 'loading' | 'found' | 'not_found'>('idle');
   const [foundShipment, setFoundShipment] = useState<typeof MOCK_SHIPMENTS[0] | null>(null);
   const [foundEvents, setFoundEvents] = useState<typeof MOCK_TRACKING_EVENTS>([]);
+  const resultRef = useRef<HTMLElement>(null);
 
   // Auto-fill from URL params (e.g., from homepage search)
   useEffect(() => {
@@ -57,22 +59,31 @@ export default function RastreoPage() {
     const q = query.trim().toUpperCase();
     if (!q) return;
 
-    const shipment = MOCK_SHIPMENTS.find(
-      s => s.trackingCode.toUpperCase() === q || s.id.toUpperCase() === q
-    );
+    setResult('loading');
 
-    if (shipment) {
-      setFoundShipment(shipment);
-      const events = MOCK_TRACKING_EVENTS
-        .filter(e => e.shipmentId === shipment.id)
-        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-      setFoundEvents(events);
-      setResult('found');
-    } else {
-      setFoundShipment(null);
-      setFoundEvents([]);
-      setResult('not_found');
-    }
+    setTimeout(() => {
+      const shipment = MOCK_SHIPMENTS.find(
+        s => s.trackingCode.toUpperCase() === q || s.id.toUpperCase() === q
+      );
+
+      if (shipment) {
+        setFoundShipment(shipment);
+        const events = MOCK_TRACKING_EVENTS
+          .filter(e => e.shipmentId === shipment.id)
+          .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        setFoundEvents(events);
+        setResult('found');
+      } else {
+        setFoundShipment(null);
+        setFoundEvents([]);
+        setResult('not_found');
+      }
+
+      // Auto scroll
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }, 600); // Simulate network
   };
 
   const handleTrack = (e: React.FormEvent) => {
@@ -106,17 +117,22 @@ export default function RastreoPage() {
                 <input
                   type="text"
                   value={tracking}
-                  onChange={(e) => setTracking(e.target.value)}
+                  onChange={(e) => { setTracking(e.target.value); if (result !== 'idle') setResult('idle'); }}
                   placeholder={t('tracking.placeholder')}
                   className="w-full pl-11 pr-4 py-4 rounded-l-xl bg-white/[0.06] border border-white/[0.08] border-r-0 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm"
                 />
               </div>
               <button
                 type="submit"
-                className="px-8 py-4 gradient-cta text-white font-bold rounded-r-xl hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] transition-all duration-300 text-sm cursor-pointer shrink-0 flex items-center gap-2"
+                disabled={result === 'loading'}
+                className="px-8 py-4 gradient-cta text-white font-bold rounded-r-xl hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] transition-all duration-300 text-sm cursor-pointer shrink-0 flex items-center gap-2 disabled:opacity-70"
               >
-                {t('tracking.btn')}
-                <ArrowRight className="w-4 h-4" />
+                {result === 'loading' ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                  <>
+                    <ScanLine className="w-4 h-4" />
+                    {t('tracking.btn')}
+                  </>
+                )}
               </button>
             </div>
 
@@ -139,9 +155,22 @@ export default function RastreoPage() {
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-dark-900 to-transparent" />
       </section>
 
+      {/* Loading state */}
+      {result === 'loading' && (
+        <section ref={resultRef} className="relative py-28">
+          <div className="absolute inset-0 gradient-section" />
+          <div className="relative max-w-xl mx-auto px-4 sm:px-6 text-center">
+            <div className="glass-card rounded-2xl p-10 animate-pulse">
+              <Loader2 className="w-12 h-12 text-indigo-400 mx-auto mb-4 animate-spin" />
+              <p className="text-neutral-500 text-base">Rastreando paquete...</p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Tracking Result — Found */}
       {result === 'found' && foundShipment && (
-        <section className="relative py-28">
+        <section ref={resultRef} className="relative py-28 animate-scale-in">
           <div className="absolute inset-0 gradient-section" />
           <div className="relative max-w-3xl mx-auto px-4 sm:px-6">
             <div className="glass-card rounded-2xl p-8 sm:p-10">
@@ -163,7 +192,7 @@ export default function RastreoPage() {
                 {[
                   { icon: User, label: 'Remitente', value: `${foundShipment.senderName} — ${foundShipment.senderCity}` },
                   { icon: User, label: 'Destinatario', value: `${foundShipment.recipientName} — ${foundShipment.recipientCity}` },
-                  { icon: Scale, label: 'Peso', value: `${foundShipment.weight} KG` },
+                  { icon: Scale, label: 'Peso / Volumen', value: `${foundShipment.weight} KG (${foundShipment.dimensions})` },
                   { icon: Globe, label: 'Origen', value: foundShipment.origin === 'CO' ? 'Colombia' : foundShipment.origin === 'US' ? 'Estados Unidos' : 'China' },
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.03]">
@@ -247,7 +276,7 @@ export default function RastreoPage() {
 
       {/* Not Found */}
       {result === 'not_found' && (
-        <section className="relative py-28">
+        <section ref={resultRef} className="relative py-28 animate-scale-in">
           <div className="absolute inset-0 gradient-section" />
           <div className="relative max-w-xl mx-auto px-4 sm:px-6 text-center">
             <div className="glass-card rounded-2xl p-10">

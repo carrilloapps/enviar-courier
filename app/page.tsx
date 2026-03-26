@@ -182,7 +182,7 @@ export default function HomePage() {
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" />
                 </Link>
                 <Link
-                  href="https://wa.me/573027543225"
+                  href="https://wa.me/573003328389"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-white/[0.05] text-white font-semibold rounded-xl border border-white/[0.08] hover:bg-white/[0.08] hover:border-white/[0.12] transition-all duration-300 cursor-pointer text-sm"
@@ -338,7 +338,7 @@ export default function HomePage() {
 
                 {/* CTA */}
                 <Link
-                  href="https://wa.me/573027543225"
+                  href="https://wa.me/573003328389"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-4 w-full py-3 gradient-lime text-dark-950 font-bold rounded-xl hover:shadow-[0_0_20px_rgba(163,230,53,0.2)] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-sm"
