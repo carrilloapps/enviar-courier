@@ -20,7 +20,6 @@ import type { Currency } from '@/app/lib/pricing';
 
 const navLinks = [
   { key: 'nav.home', href: '/' },
-  { key: 'nav.services', href: '/#servicios' },
   { key: 'nav.rates', href: '/tarifas' },
   { key: 'nav.locker', href: '/casillero' },
   { key: 'nav.tracking', href: '/rastreo' },
