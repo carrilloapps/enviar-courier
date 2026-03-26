@@ -10,9 +10,11 @@ import {
   Send,
   ArrowUpRight,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function Footer() {
   const { t } = useApp();
+  const router = useRouter();
 
   return (
     <footer className="relative border-t border-white/[0.04]">
@@ -32,7 +34,7 @@ export default function Footer() {
             <p className="text-neutral-400 mb-8 text-sm">
               {t('newsletter.subtitle')}
             </p>
-            <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
+            <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => { e.preventDefault(); router.push('/suscripcion-exitosa'); }}>
               <div className="relative flex-1">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
                 <input

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useApp } from '@/app/lib/context';
 import { COLOMBIA_LOCATIONS } from '@/app/lib/locations';
@@ -42,6 +43,7 @@ const stepGradients = [
 
 export default function CasilleroPage() {
   const { t } = useApp();
+  const router = useRouter();
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', id: '', city: '',
@@ -55,72 +57,13 @@ export default function CasilleroPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert('¡Casillero creado exitosamente! Te contactaremos pronto.');
+    router.push('/registro-exitoso');
   };
 
   return (
     <div className="overflow-hidden">
-      {/* Hero */}
-      <section className="relative pt-32 pb-24 overflow-hidden">
-        <div className="absolute inset-0 gradient-hero" />
-        <div className="absolute inset-0 grid-bg" />
-        <div className="absolute top-20 right-[15%] w-[400px] h-[400px] rounded-full bg-teal-400/[0.06] blur-[100px]" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-400/10 border border-teal-400/20 text-xs font-semibold text-teal-300 mb-6">
-            <Package className="w-3.5 h-3.5" />
-            Casillero Internacional
-          </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            {t('locker.hero.title')}
-          </h1>
-          <p className="text-base sm:text-lg text-neutral-400 max-w-2xl mx-auto">
-            {t('locker.hero.subtitle')}
-          </p>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-dark-900 to-transparent" />
-      </section>
-
-      {/* How it works */}
-      <section className="relative py-28">
-        <div className="absolute inset-0 gradient-section" />
-        <div className="absolute inset-0 dot-pattern" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-              {t('locker.how.title')}
-            </h2>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {steps.map((step, i) => {
-              const stepKeys = [
-                { title: 'locker.step1.title', desc: 'locker.step1.desc' },
-                { title: 'locker.step2.title', desc: 'locker.step2.desc' },
-                { title: 'locker.step3.title', desc: 'locker.step3.desc' },
-                { title: 'locker.step4.title', desc: 'locker.step4.desc' },
-                { title: 'locker.step5.title', desc: 'locker.step5.desc' },
-                { title: 'locker.step6.title', desc: 'locker.step6.desc' },
-              ];
-
-              return (
-                <div key={i} className="glass-card rounded-2xl p-8 group cursor-default relative overflow-hidden">
-                  <div className="absolute top-4 right-5 text-5xl font-bold text-white/[0.03] font-[var(--font-heading)]">
-                    {step.numKey}
-                  </div>
-                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${stepGradients[i]} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                    <step.icon className="w-7 h-7 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-3">{t(stepKeys[i].title)}</h3>
-                  <p className="text-neutral-500 text-sm leading-relaxed">{t(stepKeys[i].desc)}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* Professional Registration Suite */}
-      <section className="relative py-28" id="registro">
+      <section className="relative pt-32 pb-24" id="registro">
         <div className="absolute inset-0 bg-dark-950" />
         <div className="absolute inset-0 grid-bg" />
         <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2" />
@@ -309,6 +252,45 @@ export default function CasilleroPage() {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="relative py-28">
+        <div className="absolute inset-0 gradient-section" />
+        <div className="absolute inset-0 dot-pattern" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+              {t('locker.how.title')}
+            </h2>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {steps.map((step, i) => {
+              const stepKeys = [
+                { title: 'locker.step1.title', desc: 'locker.step1.desc' },
+                { title: 'locker.step2.title', desc: 'locker.step2.desc' },
+                { title: 'locker.step3.title', desc: 'locker.step3.desc' },
+                { title: 'locker.step4.title', desc: 'locker.step4.desc' },
+                { title: 'locker.step5.title', desc: 'locker.step5.desc' },
+                { title: 'locker.step6.title', desc: 'locker.step6.desc' },
+              ];
+
+              return (
+                <div key={i} className="glass-card rounded-2xl p-8 group cursor-default relative overflow-hidden">
+                  <div className="absolute top-4 right-5 text-5xl font-bold text-white/[0.03] font-[var(--font-heading)]">
+                    {step.numKey}
+                  </div>
+                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${stepGradients[i]} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    <step.icon className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-3">{t(stepKeys[i].title)}</h3>
+                  <p className="text-neutral-500 text-sm leading-relaxed">{t(stepKeys[i].desc)}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
