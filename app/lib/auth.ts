@@ -10,6 +10,7 @@ export interface User {
   avatar?: string;
   phone?: string;
   lockerId?: string;
+  status?: 'active' | 'blocked';
   createdAt: string;
 }
 
@@ -144,13 +145,13 @@ export function canManageLocations(role: Role): boolean {
 
 // Mock current user — in production, this comes from auth provider
 export const MOCK_USERS: User[] = [
-  { id: 'u1', name: 'Carlos Ramírez', email: 'carlos@email.com', role: 'usuario', lockerId: 'EC-001', createdAt: '2025-01-15', phone: '+58 412 1234567' },
-  { id: 'u2', name: 'María González', email: 'maria@email.com', role: 'usuario', lockerId: 'EC-002', createdAt: '2025-02-10', phone: '+58 414 7654321' },
-  { id: 'u3', name: 'Pedro López', email: 'pedro@enviar.co', role: 'transportista', createdAt: '2024-06-01', phone: '+57 310 9876543' },
-  { id: 'u4', name: 'Ana Herrera', email: 'ana@enviar.co', role: 'operador', createdAt: '2024-03-15', phone: '+57 312 1112233' },
-  { id: 'u5', name: 'Sofía Martínez', email: 'sofia@enviar.co', role: 'analista', createdAt: '2024-08-20', phone: '+57 315 4445566' },
-  { id: 'u6', name: 'Juan Rodríguez', email: 'juan@enviar.co', role: 'gerente', createdAt: '2023-11-01', phone: '+57 300 7778899' },
-  { id: 'u7', name: 'Admin Sistema', email: 'admin@enviar.co', role: 'superadmin', createdAt: '2023-01-01', phone: '+57 301 0001122' },
+  { id: 'u1', name: 'Carlos Ramírez', email: 'carlos@email.com', role: 'usuario', lockerId: 'EC-001', createdAt: '2025-01-15', phone: '+58 412 1234567', status: 'active' },
+  { id: 'u2', name: 'María González', email: 'maria@email.com', role: 'usuario', lockerId: 'EC-002', createdAt: '2025-02-10', phone: '+58 414 7654321', status: 'blocked' },
+  { id: 'u3', name: 'Pedro López', email: 'pedro@enviar.co', role: 'transportista', createdAt: '2024-06-01', phone: '+57 310 9876543', status: 'active' },
+  { id: 'u4', name: 'Ana Herrera', email: 'ana@enviar.co', role: 'operador', createdAt: '2024-03-15', phone: '+57 312 1112233', status: 'active' },
+  { id: 'u5', name: 'Sofía Martínez', email: 'sofia@enviar.co', role: 'analista', createdAt: '2024-08-20', phone: '+57 315 4445566', status: 'active' },
+  { id: 'u6', name: 'Juan Rodríguez', email: 'juan@enviar.co', role: 'gerente', createdAt: '2023-11-01', phone: '+57 300 7778899', status: 'active' },
+  { id: 'u7', name: 'Admin Sistema', email: 'admin@enviar.co', role: 'superadmin', createdAt: '2023-01-01', phone: '+57 301 0001122', status: 'active' },
 ];
 
 export function getMockUser(role: Role): User {

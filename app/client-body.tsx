@@ -9,14 +9,16 @@ import WhatsAppButton from '@/app/components/ui/WhatsAppButton';
 export default function ClientBody({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isDashboard = pathname.startsWith('/dashboard');
+  const isAuthPage = pathname === '/ingresar';
+  const hideGlobals = isDashboard || isAuthPage;
 
   return (
     <body className="min-h-full flex flex-col font-[family-name:var(--font-inter)]">
       <AppProvider>
-        {!isDashboard && <Navbar />}
+        {!hideGlobals && <Navbar />}
         <main className="flex-1">{children}</main>
-        {!isDashboard && <Footer />}
-        {!isDashboard && <WhatsAppButton />}
+        {!hideGlobals && <Footer />}
+        {!hideGlobals && <WhatsAppButton />}
       </AppProvider>
     </body>
   );
