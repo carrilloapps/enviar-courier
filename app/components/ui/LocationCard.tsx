@@ -19,7 +19,7 @@ export default function LocationCard({ loc, t }: { loc: Location, t: (key: strin
       <div className="flex items-start justify-between mb-3">
         <div>
           <h4 className="text-base font-bold text-white flex items-center gap-2">
-            <span className="text-base">{loc.country === 'CO' ? '🇨🇴' : '🇻🇪'}</span>
+            <MapPin className="w-4 h-4 text-indigo-400" />
             {loc.city}
             {loc.area && <span className="text-teal-400 text-sm font-normal ml-1.5">· {loc.area}</span>}
           </h4>

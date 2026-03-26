@@ -200,7 +200,7 @@ export default function CasilleroPage() {
               <div key={loc.id} className="glass-card rounded-2xl p-6 group">
                 <div className="flex items-start justify-between mb-3">
                   <h4 className="text-base font-bold text-white">
-                    🇨🇴 {loc.city}{loc.area ? ` · ${loc.area}` : ''}
+                    <MapPin className="inline-block w-4 h-4 mr-1.5 text-indigo-400" /> {loc.city}{loc.area ? ` · ${loc.area}` : ''}
                   </h4>
                   <button
                     onClick={() => copyAddress(loc.id, `${loc.address}, ${loc.city}, Colombia. CP: ${loc.postalCode}`)}
@@ -216,7 +216,7 @@ export default function CasilleroPage() {
                 )}
                 <div className="flex items-center gap-2 pt-3 border-t border-white/[0.04]">
                   <Link href={`tel:${loc.phone.replace(/\s/g, '')}`} className="text-xs text-neutral-500 hover:text-indigo-400 transition-colors duration-200 cursor-pointer">
-                    📞 {loc.phone}
+                    <Phone className="inline-block w-3.5 h-3.5 mr-1 text-teal-400" /> {loc.phone}
                   </Link>
                 </div>
               </div>
