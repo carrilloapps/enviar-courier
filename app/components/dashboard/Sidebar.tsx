@@ -18,6 +18,7 @@ import {
   ChevronRight,
   LogOut,
   ExternalLink,
+  Bell,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -41,6 +42,7 @@ const navItems: NavItem[] = [
   { label: 'Usuarios', href: '/dashboard/usuarios', icon: Users, permission: 'view_all_users' },
   { label: 'Sedes', href: '/dashboard/sedes', icon: MapPin, permission: 'manage_locations' },
   { label: 'Tarifas', href: '/dashboard/tarifas', icon: Receipt, permission: 'manage_rates' },
+  { label: 'Notificaciones', href: '/dashboard/notificaciones', icon: Bell },
   { label: 'Configuración', href: '/dashboard/configuracion', icon: Settings, permission: 'manage_settings' },
 ];
 
@@ -49,6 +51,7 @@ const userNavItems: NavItem[] = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Mis envíos', href: '/dashboard/envios', icon: Package },
   { label: 'Mi casillero', href: '/dashboard/casilleros', icon: Boxes },
+  { label: 'Notificaciones', href: '/dashboard/notificaciones', icon: Bell },
 ];
 
 export default function Sidebar({ role, collapsed, onToggle }: SidebarProps) {
