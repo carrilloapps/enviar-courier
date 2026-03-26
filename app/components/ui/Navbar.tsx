@@ -204,7 +204,7 @@ export default function Navbar() {
                   </>
                 ) : (
                   <Link
-                    href="/auth"
+                    href="/ingresar"
                     className="flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.06] border border-white/[0.08] hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-all duration-300 cursor-pointer group"
                     title={locale === 'es' ? 'Iniciar sesión' : 'Sign in'}
                   >
@@ -262,7 +262,7 @@ export default function Navbar() {
               </div>
             ) : (
               <Link
-                href="/auth"
+                href="/ingresar"
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-3 mb-4 pb-4 border-b border-white/[0.06] cursor-pointer group"
               >

@@ -13,6 +13,7 @@ import {
   Package,
   Truck,
   ArrowRight,
+  Check,
 } from 'lucide-react';
 import PageHero from '@/app/components/ui/PageHero';
 
@@ -44,24 +45,75 @@ export default function NosotrosPage() {
         colorScheme="indigo"
       />
 
-      {/* Mission & Vision */}
-      <section className="relative py-28">
-        <div className="absolute inset-0 gradient-section" />
+      {/* Mission & Vision - Split Screen Layout */}
+      <section className="relative py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-dark-950" />
+        <div className="absolute inset-0 grid-bg opacity-50" />
+        <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2" />
+        <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2" />
+        
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="glass-card rounded-2xl p-10 group">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center mb-6 shadow-lg glow-teal group-hover:scale-105 transition-transform duration-300">
-                <Target className="w-8 h-8 text-white" />
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+            {/* Mission */}
+            <div className="relative group">
+              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-indigo-500/20 to-teal-500/0 opacity-0 group-hover:opacity-100 blur-xl transition-all duration-700" />
+              <div className="relative glass-card rounded-3xl p-8 sm:p-12 border border-white/10 hover:border-indigo-500/30 transition-colors duration-500">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 mb-8 shadow-inner shadow-indigo-500/20">
+                  <Target className="w-8 h-8 text-indigo-400" />
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-black text-white mb-6 tracking-tight">
+                  Nuestra <span className="text-gradient">Misión</span>
+                </h2>
+                <p className="text-neutral-400 leading-relaxed text-base sm:text-lg">
+                  {t('about.mission.desc')}
+                </p>
+                <div className="mt-8 pt-8 border-t border-white/5 flex gap-4">
+                  <div className="flex -space-x-3">
+                    <div className="w-10 h-10 rounded-full bg-dark-800 border-2 border-dark-950 flex items-center justify-center z-30">
+                      <Truck className="w-4 h-4 text-teal-400" />
+                    </div>
+                    <div className="w-10 h-10 rounded-full bg-dark-800 border-2 border-dark-950 flex items-center justify-center z-20">
+                      <Package className="w-4 h-4 text-indigo-400" />
+                    </div>
+                    <div className="w-10 h-10 rounded-full bg-dark-800 border-2 border-dark-950 flex items-center justify-center z-10">
+                      <Globe className="w-4 h-4 text-lime-400" />
+                    </div>
+                  </div>
+                  <div className="text-sm text-neutral-500 flex items-center">
+                    Logística Integral
+                  </div>
+                </div>
               </div>
-              <h2 className="text-2xl font-bold text-white mb-4">{t('about.mission.title')}</h2>
-              <p className="text-neutral-400 leading-relaxed text-sm">{t('about.mission.desc')}</p>
             </div>
-            <div className="glass-card rounded-2xl p-10 group">
-              <div className="w-16 h-16 rounded-2xl gradient-lime flex items-center justify-center mb-6 shadow-lg glow-lime group-hover:scale-105 transition-transform duration-300">
-                <Eye className="w-8 h-8 text-dark-950" />
+
+            {/* Vision */}
+            <div className="relative group mt-8 lg:mt-32">
+              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tl from-teal-500/20 to-indigo-500/0 opacity-0 group-hover:opacity-100 blur-xl transition-all duration-700" />
+              <div className="relative glass-card rounded-3xl p-8 sm:p-12 border border-white/10 hover:border-teal-500/30 transition-colors duration-500">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-teal-500/10 border border-teal-500/20 mb-8 shadow-inner shadow-teal-500/20">
+                  <Eye className="w-8 h-8 text-teal-400" />
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-black text-white mb-6 tracking-tight">
+                  La <span className="text-teal-400">Visión</span> 2030
+                </h2>
+                <p className="text-neutral-400 leading-relaxed text-base sm:text-lg">
+                  {t('about.vision.desc')}
+                </p>
+                <ul className="mt-8 space-y-4">
+                  {[
+                    'Innovación Tecnológica Continua',
+                    'Expansión de Rutas Globales',
+                    'Sustentabilidad y Eficiencia'
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex items-center gap-3 text-sm text-neutral-300 font-medium">
+                      <div className="w-5 h-5 rounded-full bg-teal-500/20 flex items-center justify-center">
+                        <Check className="w-3 h-3 text-teal-400" />
+                      </div>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h2 className="text-2xl font-bold text-white mb-4">{t('about.vision.title')}</h2>
-              <p className="text-neutral-400 leading-relaxed text-sm">{t('about.vision.desc')}</p>
             </div>
           </div>
         </div>
